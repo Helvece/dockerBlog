@@ -1,0 +1,34 @@
+
+version: '3.8'
+
+services:
+    php:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - '5784:80'
+        volumes:
+            - ./src:/var/www/html
+
+    db:
+        image: 'mariadb'
+        restart: always
+        environment:
+            MYSQL_DATABASE: data
+            MYSQL_ROOT_PASSWORD: password
+        volumes:
+           # Pour lancer un dump automatiquement au montage du conteneur
+            - ./database/dump.sql:/docker-entrypoint-initdb.d/db_data.sql
+            - db_data:/var/lib/mysql
+
+
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - '8457:8080'
+
+
+volumes:
+    db_data:
